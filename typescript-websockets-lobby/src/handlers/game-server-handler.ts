@@ -6,7 +6,7 @@ import * as crypto from 'crypto';
 
 // Formatted like a UUID-v4
 function lobbyId() {
-	return crypto.randomUUID();
+	return crypto.randomUUID().substring(0, 7);
 }
 
 export class GameServerHandler {

@@ -385,7 +385,6 @@ export class ProtocolHelper {
 	// NEW: TODO: should basically spread whatever info we give it... "meta" property for generic usage?
 	public static playerUpdateInfo(_gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) {
 		try {
-			console.log(message.payload.color);
 			if (message.payload.color) {
 				clientSocket.color = message.payload.color;
 			}

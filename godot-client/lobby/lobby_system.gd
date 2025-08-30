@@ -190,7 +190,6 @@ func user_disconnect():
 
 func lobby_create():
 	_ws_send_action(ACTION.CreateLobby)
-	pass
 
 func lobby_join(id: String):
 	_ws_send_action(ACTION.JoinLobby, { "id" : id })

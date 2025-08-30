@@ -29,6 +29,12 @@ export class Lobby {
 			// Add the player to the Lobby list
 			this.players.push(newPlayer);
 
+			// And tell all players to get their own lobby.
+			const message = new Message(EAction.GetOwnLobby, {
+				lobby: this.get(),
+			});
+			this.players.forEach((el) => el.socket.send(message.toString()));
+
 			return true;
 		} catch (err) {
 			LoggerHelper.logError(`An error had occurred while adding a new player to the Lobby: ${err}`);
@@ -40,6 +46,10 @@ export class Lobby {
 			let playerToRemove = this.players.find((currentClientSocket) => currentClientSocket.id == idPlayer);
 			if (playerToRemove) {
 				playerToRemove.lobbyId = '';
+
+				// Tell this player that they should get the lobby: TODO: Should it be for everyone?
+				const message = new Message(EAction.GetOwnLobby, {});
+				playerToRemove.socket.send(message.toString());
 			}
 
 			// remove the player from the list
@@ -49,8 +59,13 @@ export class Lobby {
 			}
 
 			const playerLeftMessage = new Message(EAction.PlayerLeft, {});
-
 			this.players.forEach((el) => el.socket.send(playerLeftMessage.toString()));
+
+			// And tell all players to get their own lobby.
+			const message = new Message(EAction.GetOwnLobby, {
+				lobby: this.get(),
+			});
+			this.players.forEach((el) => el.socket.send(message.toString()));
 		} catch (err) {
 			LoggerHelper.logError(`An error had occurred while removing a player from the Lobby: ${err}`);
 		}

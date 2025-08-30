@@ -39,7 +39,6 @@ func _ready() -> void:
 	# TODO: The server might want to automatically send these events upon the conditions. 
 	LobbySystem.signal_user_joined.connect(func(_id): LobbySystem.users_get())
 	LobbySystem.signal_user_left.connect(func(_id): LobbySystem.users_get();  LobbySystem.lobbies_get())
-	LobbySystem.signal_lobby_list_changed.connect(func(_list): LobbySystem.lobby_get_own()) # Get own each time we get lobbies generally.
 	
 	# Debug
 	LobbySystem.signal_packet_parsed.connect(_debug)

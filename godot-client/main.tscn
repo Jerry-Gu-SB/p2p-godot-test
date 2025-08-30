@@ -10,4 +10,3 @@ script = ExtResource("1_0xm2m")
 [node name="LobbyMenu" parent="." instance=ExtResource("1_ig7tw")]
 
 [node name="LobbyQuickConnect" parent="." instance=ExtResource("3_h2yge")]
-visible = false

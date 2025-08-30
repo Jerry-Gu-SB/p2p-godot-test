@@ -6,7 +6,6 @@ var player_scene_new = preload("res://game/PlayerCharacter/PlayerCharacterScene.
 
 @export var player_container: Node3D
 
-
 signal signal_player_death(id)
 signal signal_player_kill(id)
 
