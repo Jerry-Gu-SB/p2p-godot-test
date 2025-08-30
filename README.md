@@ -55,13 +55,14 @@ While WebRTC is indeed true, direct P2P, it's not easy to get the clients ready 
 - Join, create, leave lobbies
 - Lobby chat
 - Color picker
+- Quick Join option (code-based lobby joining, with copy/paste)
 
 ##### First Person Shooter Demo
 
 - Leaderboard
 - In Game Chat
 - Drop-in, Drop-out joining (quit, rejoin, etc.)
-- 2 weapons
+- 2 hitscan weapons
 - Sounds, hit registration
 - Projectile spawning (in-progress) example
 - Map Selector (in-progress)
@@ -77,8 +78,9 @@ While WebRTC is indeed true, direct P2P, it's not easy to get the clients ready 
 - Select `godot-client/project.godot`
 - Set 2 debug instances
 - Play
+- Connect, create lobby, join on 2 instances, start
 
-### Websockets server:
+### Websockets server (Typescript):
 
 - Pre-req: node, npm, yarn
 - `npm install -g corepack`
@@ -109,28 +111,26 @@ While WebRTC is indeed true, direct P2P, it's not easy to get the clients ready 
 # How to Use in Your Game
 
 - Copy the `lobby` folder into your game from `godot_client/lobby`
-- Add `lobby_system.gd` as an Autoload
-  - To do this:
+  - (Alternatively, you could use this project & delete or modify the `game` folder or drop your own `World` in)
+- Once you have the `lobby` folder, add `lobby_system.gd` as an Autoload. To do this:
   - Project -> Project Settings
   - Choose "Globals" Tab
   - Path: Click the folder and navigate to `lobby/lobby_system.gd`
-  - Node Name: LobbySystem
+  - Node Name: `LobbySystem`
   - Add
   - Enable it
 - Restart the project
-- In your main scene, hit CRTL + SHIFT + A for adding an existing scene
+- In your main scene, hit CRTL + SHIFT + A to add an existing scene
 - Search for "LobbyMenu" and add it
   - Or search for "LobbyQuickJoin" if you prefer that version
-- Add some signals to your main scene like: [main.gd](godot-client/main.gd) that will add the game scene or "World" when the game starts
-- Add some signals to your game scene or "World" as I call it like [world.gd](godot-client/game/world/world.gd) to add and remove players
+- Add new signals to your main scene like: [main.gd](godot-client/main.gd) that will add the game scene or "World" when the game starts
+- Add new signals to your game scene or "World" like: [world.gd](godot-client/game/world/world.gd) to add and remove players
 - Add your MultiplayerSpawner and player scene in the Autospawn of it
 
 |           Main.tscn            |               World.tscn               |
 | :----------------------------: | :------------------------------------: |
 | ![main](docs/main_example.png) | ![world scene](docs/world_example.png) |
 |                                |
-
-- (Alternatively, you could use this project & delete the `game` folder and drop your own `World` in)
 
 ## Assets, Resources, and Thanks!:
 
