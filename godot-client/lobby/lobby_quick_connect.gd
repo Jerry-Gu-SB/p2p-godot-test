@@ -33,10 +33,9 @@ func _ready() -> void:
 	LobbySystem.signal_client_disconnected.connect(func(): _render_connection_light(false))
 	LobbySystem.signal_packet_parsed.connect(func(_packet): _render_connection_light(true))
 	# DEBUG:
-	LobbySystem.signal_packet_parsed.connect(func(packet): print('DEBUG: ', packet))
+	#LobbySystem.signal_packet_parsed.connect(func(packet): print('DEBUG: ', packet))
 
 
-# TODO: Paste-able help
 func _quick_join():
 	LobbySystem.user_connect(username_value)
 	await get_tree().create_timer(1.0).timeout 

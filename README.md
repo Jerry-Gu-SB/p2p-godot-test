@@ -63,26 +63,20 @@ While WebRTC is indeed true, direct P2P, it's not easy to get the clients ready 
 - Drop-in, Drop-out joining (quit, rejoin, etc.)
 - 2 weapons
 - Sounds, hit registration
-- Projectile spawning (in-progress)
+- Projectile spawning (in-progress) example
 - Map Selector (in-progress)
 - 3rd person option (present, but in-progress)
-- Add grenades, explosives, more ragdolls, melee attacks
+- Add grenades, explosives, more ragdolls, melee attacks (to-do)
 
-## Future Features
+# Local Install and Set up:
 
-Future plans are to make a "single click" version suited for Game Jam usage. Perhaps 3 buttons
+### Godot Client:
 
-- Quick Host - Creates a lobby code
-- Quick Join - Paste in a lobby code to join a match
-- Start Game
-
-I'll also be re-writing the Typescript server in Go in the coming weeks because I need to learn it for work and the Typescript code is not very resilient.
-
-Other plans:
-
-- Include a small 2D game, like a tank battler or survivors-like
-
-# Installation and Set up:
+- Open Godot (4.5)
+- Import
+- Select `godot-client/project.godot`
+- Set 2 debug instances
+- Play
 
 ### Websockets server:
 
@@ -98,26 +92,45 @@ Other plans:
 ##### Cloudflare:
 
 - Fork this repo
-- Create a new worker & point it
-- Once read, update the `SECRET_KEY`
-- See [typescript-websockets-lobby README](typescript-websockets-lobby/README.md)
+- Log in to Cloudflare
+- Create a new worker & point the new repository
+- Once ready, update the `SECRET_KEY`
+- For detailed self hosting instructions on Cloudflare, see: [typescript-websockets-lobby README](typescript-websockets-lobby/README.md)
 
-### Godot Client:
-
-- Open Godot (4.5)
-- Import
-- Select `godot-client/project.godot`
-- Set 2 debug instances
-- Play
-
-##### Export to itch.io:
+##### Export Godot Game to itch.io:
 
 - Create /dist
 - Export HTML5:
   - make sure to enable extensions (webrtc folder has an extension in it...)
   - Tell file name to be dist/index.html (helps because its in .gitingore)
-- upload zip or:
-- `butler push dist jonandrewitchio/andoodev-web-rtc-p2p:html5`
+- upload zip or: [butler](https://itch.io/docs/butler/)
+- `butler push dist jonandrewitchio/andoodev-web-rtc-p2p:html5` (don't use this one, that's me, use your name & game)
+
+# How to Use in Your Game
+
+- Copy the `lobby` folder into your game from `godot_client/lobby`
+- Add `lobby_system.gd` as an Autoload
+  - To do this:
+  - Project -> Project Settings
+  - Choose "Globals" Tab
+  - Path: Click the folder and navigate to `lobby/lobby_system.gd`
+  - Node Name: LobbySystem
+  - Add
+  - Enable it
+- Restart the project
+- In your main scene, hit CRTL + SHIFT + A for adding an existing scene
+- Search for "LobbyMenu" and add it
+  - Or search for "LobbyQuickJoin" if you prefer that version
+- Add some signals to your main scene like: [main.gd](godot-client/main.gd) that will add the game scene or "World" when the game starts
+- Add some signals to your game scene or "World" as I call it like [world.gd](godot-client/game/world/world.gd) to add and remove players
+- Add your MultiplayerSpawner and player scene in the Autospawn of it
+
+|           Main.tscn            |               World.tscn               |
+| :----------------------------: | :------------------------------------: |
+| ![main](docs/main_example.png) | ![world scene](docs/world_example.png) |
+|                                |
+
+- (Alternatively, you could use this project & delete the `game` folder and drop your own `World` in)
 
 ## Assets, Resources, and Thanks!:
 
