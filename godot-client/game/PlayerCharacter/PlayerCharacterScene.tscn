@@ -31,7 +31,7 @@
 [ext_resource type="Script" uid="uid://b444whi1t4ggg" path="res://game/PlayerCharacter/player_input.gd" id="22_6hm04"]
 [ext_resource type="Script" uid="uid://cyuq81eounly0" path="res://game/PlayerCharacter/gameplay.gd" id="23_ltjnr"]
 [ext_resource type="PackedScene" uid="uid://qsh5m8pulul5" path="res://game/PlayerCharacter/health_system.tscn" id="24_tprt8"]
-[ext_resource type="PackedScene" uid="uid://0by3fcnl3a5n" path="res://game/assets/models/master/master_scene.tscn" id="25_n0hoc"]
+[ext_resource type="PackedScene" uid="uid://0by3fcnl3a5n" path="res://game/PlayerCharacter/master/master_scene.tscn" id="25_n0hoc"]
 [ext_resource type="FontFile" uid="uid://bnudr3myap7vs" path="res://lobby/theme/Strait-Regular.ttf" id="32_agnd3"]
 
 [sub_resource type="Curve" id="Curve_b3kaq"]
@@ -303,7 +303,7 @@ runAccel = 8.0
 runDeccel = 7.0
 jumpHeight = 2.400000000008731
 jumpTimeToPeak = 0.6999999999970896
-jumpTimeToFall = 0.40000000000873115
+jumpTimeToFall = 0.4000000000087311
 inAirInputMultiplier = 0.05
 moveForwardAction = "up"
 moveBackwardAction = "down"

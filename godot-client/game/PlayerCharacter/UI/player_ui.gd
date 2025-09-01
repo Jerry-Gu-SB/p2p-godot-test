@@ -154,7 +154,7 @@ func _render_own_lobby_info(lobby):
 		if not %LobbyScoreboard.get_node_or_null(_player.id):
 			var new_player_item = Instantiate.scene(PlayerInfoItem)
 			new_player_item.name = _player.id 
-			new_player_item.set_user_data(_player.username, _player.color)
+			new_player_item.render_player_info(_player.username,  _player.metadata.color if _player.metadata.has('color') else 'WHITE')
 			%LobbyScoreboard.add_child(new_player_item, true)
 
 func _render_remove_player_info(id: int):

@@ -72,8 +72,9 @@ func _on_master_respawn():
 func _on_get_own_lobby(lobby):
 	for _this_player in lobby.players:
 		if _this_player.id == player.name:
-			var _color: Color = Color.from_string(_this_player.color, Color.BLUE)
-			set_mesh_color(_color)
+			if _this_player.metadata.has('color'): 
+				var _color: Color = Color.from_string(_this_player.metadata.color, Color.WHITE)
+				set_mesh_color(_color)
 
 # Set up a map. This could be better, but it works for now
 #  

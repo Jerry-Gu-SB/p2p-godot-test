@@ -32,10 +32,8 @@ export class ProtocolHelper {
 		const playerConnectedMessage: Message = new Message(EAction.PlayerJoin, {
 			username: playerClient.username,
 			id: playerClient.id,
-			color: playerClient.color,
+			metadata: playerClient.metadata,
 			lobbyId: playerClient.lobbyId,
-			position: playerClient.position,
-			direction: playerClient.direction,
 		});
 		try {
 			for (const client of gameServer.connectedClients) {
@@ -116,7 +114,6 @@ export class ProtocolHelper {
 			if (message.payload.secretKey === secretKey) {
 				clearTimeout(clientSocket.logoutTimeout);
 				clientSocket.username = message.payload.username;
-				clientSocket.color = message.payload.color;
 				LoggerHelper.logInfo(`Connection confirmed for ${clientSocket.id}`);
 
 				// Send response
@@ -143,12 +140,12 @@ export class ProtocolHelper {
 	public static sendUserList = (gameServer: GameServerHandler, clientSocket: ClientSocket) => {
 		try {
 			const userListMessage: Message = new Message(EAction.GetUsers, {
-				users: gameServer.connectedClients.map(({ username, id, lobbyId, color }) => {
+				users: gameServer.connectedClients.map(({ username, id, lobbyId, metadata }) => {
 					return {
 						username,
 						id,
 						lobbyId,
-						color,
+						metadata,
 					};
 				}),
 			});
@@ -202,7 +199,7 @@ export class ProtocolHelper {
 				const newLobby = gameServer.createLobby();
 				newLobby.addPlayer(clientSocket);
 
-				const createLobbySuccessMessage = new Message(EAction.CreateLobby, {});
+				const createLobbySuccessMessage = new Message(EAction.CreateLobby, { lobby: newLobby });
 				clientSocket.socket.send(createLobbySuccessMessage.toString());
 				// Alert all clients the changes to the lobbies
 				gameServer.connectedClients.forEach((el) => {
@@ -257,7 +254,7 @@ export class ProtocolHelper {
 
 				if (lobbyToJoin.addPlayer(clientSocket)) {
 					const joinLobbySuccessMessage = new Message(EAction.JoinLobby, {
-						lobbyToJoin,
+						lobby: lobbyToJoin,
 					});
 					clientSocket.socket.send(joinLobbySuccessMessage.toString());
 					// Alert all clients the changes to the lobbies
@@ -385,8 +382,8 @@ export class ProtocolHelper {
 	// NEW: TODO: should basically spread whatever info we give it... "meta" property for generic usage?
 	public static playerUpdateInfo(_gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) {
 		try {
-			if (message.payload.color) {
-				clientSocket.color = message.payload.color;
+			if (message.payload.metadata) {
+				clientSocket.metadata = { ...clientSocket.metadata, ...message.payload.metadata };
 			}
 			// clientSocket.socket.send(newPeerConnection.toString());
 		} catch (err: any) {

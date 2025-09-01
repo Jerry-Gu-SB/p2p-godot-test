@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cauerln6usbkh"
-path="res://.godot/imported/master.glb-afe089e726325e7528070b6bc2f6bd57.scn"
+path="res://.godot/imported/master.glb-c9363701dbc29ef4563948ca30b1757f.scn"
 
 [deps]
 
-source_file="res://game/assets/models/master/master.glb"
-dest_files=["res://.godot/imported/master.glb-afe089e726325e7528070b6bc2f6bd57.scn"]
+source_file="res://game/PlayerCharacter/master/master.glb"
+dest_files=["res://.godot/imported/master.glb-c9363701dbc29ef4563948ca30b1757f.scn"]
 
 [params]
 

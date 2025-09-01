@@ -5,10 +5,8 @@ export class ClientSocket {
 	username: String;
 	socket: WebSocket;
 	id: String;
-	color: String;
+	metadata: any;
 	lobbyId: String;
-	position: Vector2;
-	direction: Vector2;
 	logoutTimeout: NodeJS.Timeout;
 
 	constructor(
@@ -21,11 +19,8 @@ export class ClientSocket {
 		try {
 			this.socket = socket;
 			this.id = id;
-
 			this.lobbyId = '';
-			this.color = '';
-			// this.position = position;
-			// this.direction = direction;
+			this.metadata = {};
 
 			this.logoutTimeout = setTimeout(() => {
 				LoggerHelper.logWarn(`Closing socket ${this.id}. No validation.`);

@@ -1,12 +1,12 @@
 [gd_scene load_steps=32 format=4 uid="uid://0by3fcnl3a5n"]
 
-[ext_resource type="PackedScene" uid="uid://cauerln6usbkh" path="res://game/assets/models/master/master.glb" id="1_kyomj"]
-[ext_resource type="Script" uid="uid://dyuofawteqour" path="res://game/assets/models/master/master_bones.gd" id="2_2kf8t"]
-[ext_resource type="Script" uid="uid://bfjt2kvgql1g1" path="res://game/assets/models/master/master_scene.gd" id="2_ji8ob"]
-[ext_resource type="Texture2D" uid="uid://dayp6w1ratysj" path="res://game/assets/models/master/master_vanguard_diffuse1_desaturated.png" id="2_rwaq7"]
-[ext_resource type="Texture2D" uid="uid://rtjdynhji7kb" path="res://game/assets/models/master/master_vanguard_normal.png" id="3_c11qx"]
-[ext_resource type="Texture2D" uid="uid://boibjwn7qtc7t" path="res://game/assets/models/master/master_vanguard_diffuse1.png" id="5_bmp62"]
-[ext_resource type="AnimationLibrary" uid="uid://dioayttfjd456" path="res://game/assets/models/master/master_3_animations_path/master_3.res" id="7_ji8ob"]
+[ext_resource type="PackedScene" uid="uid://cauerln6usbkh" path="res://game/PlayerCharacter/master/master.glb" id="1_kyomj"]
+[ext_resource type="Script" uid="uid://dyuofawteqour" path="res://game/PlayerCharacter/master/master_bones.gd" id="2_2kf8t"]
+[ext_resource type="Script" uid="uid://bfjt2kvgql1g1" path="res://game/PlayerCharacter/master/master_scene.gd" id="2_ji8ob"]
+[ext_resource type="Texture2D" uid="uid://dayp6w1ratysj" path="res://game/PlayerCharacter/master/master_vanguard_diffuse1_desaturated.png" id="2_rwaq7"]
+[ext_resource type="Texture2D" uid="uid://rtjdynhji7kb" path="res://game/PlayerCharacter/master/master_vanguard_normal.png" id="3_c11qx"]
+[ext_resource type="Texture2D" uid="uid://boibjwn7qtc7t" path="res://game/PlayerCharacter/master/master_vanguard_diffuse1.png" id="5_bmp62"]
+[ext_resource type="AnimationLibrary" uid="uid://dioayttfjd456" path="res://game/PlayerCharacter/master/master_3_animations_path/master_3.res" id="7_ji8ob"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bmp62"]
 resource_name = "VanguardBodyMat"
