@@ -518,8 +518,3 @@ font_size = 10
 outline_size = 4
 
 [node name="PlayerUI" parent="." instance=ExtResource("21_4hhey")]
-
-[node name="JumpTimer" type="Timer" parent="."]
-unique_name_in_owner = true
-wait_time = 1.4
-one_shot = true
