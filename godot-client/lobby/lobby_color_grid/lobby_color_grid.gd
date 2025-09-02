@@ -5,7 +5,6 @@ var colors = [Color.WHITE, Color.DEEP_PINK, Color.CYAN, Color.BLUE_VIOLET, Color
 func _ready() -> void:
 	if LobbySystem:
 		LobbySystem.signal_client_connection_confirmed.connect(func(_lobbyId): choose_random_color())
-		#LobbySystem.signal_client_connection_confirmed.connect(func(_lobbyId): choose_random_color())
 	
 	var new_toggle_group = ButtonGroup.new()
 
