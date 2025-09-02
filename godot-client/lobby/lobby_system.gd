@@ -8,8 +8,11 @@ signal signal_user_joined(id)
 signal signal_user_left(id)
 signal signal_user_list_changed(users)
 
+signal signal_lobby_created(lobby)
+signal signal_lobby_joined(lobby)
 signal signal_lobby_list_changed(lobbies)
 signal signal_lobby_chat(chat_user, chat_text)
+signal signal_lobby_changed(lobby)
 signal signal_lobby_own_info(lobby)
 signal signal_lobby_game_started
 
@@ -37,8 +40,8 @@ enum ACTION {
 	Candidate
 }
 
-#const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
-const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jonandrewdavis.workers.dev'
+const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
+#const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jonandrewdavis.workers.dev'
 const WEB_SOCKET_SECRET_KEY = "9317e4d6-83b3-4188-94c4-353a2798d3c1" 
 #NOTE: Not an actual secret. Just to prevent random connections, but change if you self host
 
@@ -96,6 +99,8 @@ func _ws_parse_packet():
 	else:
 		push_warning("Invalid message from server received")		
 
+# TODO: I think this match statement could be made more straightforward.
+# TODO: Error handling (involves server refactor)
 func _ws_process_packet(message):
 	var string_enum = ACTION.keys().find(message.action)
 	match(string_enum):
@@ -114,6 +119,18 @@ func _ws_process_packet(message):
 				signal_lobby_list_changed.emit(message.payload.lobbies)
 			else:
 				signal_lobby_list_changed.emit([])
+		# TODO: Remove / change GetOwnLobby signals and use join/leave/changed
+		ACTION.CreateLobby:
+			if message.payload.has("lobby"):
+				signal_lobby_created.emit(message.payload.lobby)
+		ACTION.JoinLobby:
+			if message.payload.has("lobby"):
+				signal_lobby_joined.emit(message.payload.lobby)
+		ACTION.LobbyChanged:
+			if message.payload.has("lobby"):
+				signal_lobby_changed.emit(message.payload.lobby)			
+			else:
+				signal_lobby_changed.emit(null)
 		ACTION.GetOwnLobby:
 			if message.payload.has("lobby"):
 				signal_lobby_own_info.emit(message.payload.lobby)
@@ -214,9 +231,9 @@ func lobby_send_chat(message: String):
 	if message.length():
 		_ws_send_action(ACTION.MessageToLobby, { "message": message })
 
-func user_update_color(color: String):
-	_ws_send_action(ACTION.PlayerInfoUpdate, {"color": color })
-	
+func user_update_info(metadata: Variant):
+	_ws_send_action(ACTION.PlayerInfoUpdate, {"metadata": metadata })
+
 
 #region WebRTCMultiplayerPeer
 

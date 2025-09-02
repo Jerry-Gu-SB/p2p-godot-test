@@ -5,7 +5,7 @@ class_name  PlayerInfoItem
 var count_kills = 0
 var count_deaths = 0
 
-func set_user_data(username: String, color: String) -> void:
+func render_player_info(username: String, color: String) -> void:
 	$HBoxContainer/LabelUsername.text = username
 	$HBoxContainer/LabelColor.modulate = Color.from_string(color, Color.WHITE)
 	$HBoxContainer/LabelDeaths.text = str(0)

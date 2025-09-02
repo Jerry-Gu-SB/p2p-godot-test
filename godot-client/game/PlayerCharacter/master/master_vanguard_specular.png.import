@@ -2,35 +2,34 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://rtjdynhji7kb"
-path.s3tc="res://.godot/imported/master_vanguard_normal.png-25f4d6c2df4d354f3a59ae4d720a23d3.s3tc.ctex"
+uid="uid://xynw5562x87"
+path="res://.godot/imported/master_vanguard_specular.png-0409da86fe0d4b860f4a3bc004c1bd77.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 generator_parameters={
-"md5": "37535a558523720bc7f39665eea767f1"
+"md5": "b2fe844f0f00ff2cb7b4ed026d464d39"
 }
 
 [deps]
 
-source_file="res://game/assets/models/master/master_vanguard_normal.png"
-dest_files=["res://.godot/imported/master_vanguard_normal.png-25f4d6c2df4d354f3a59ae4d720a23d3.s3tc.ctex"]
+source_file="res://game/PlayerCharacter/master/master_vanguard_specular.png"
+dest_files=["res://.godot/imported/master_vanguard_specular.png-0409da86fe0d4b860f4a3bc004c1bd77.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=1
+compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=1
-roughness/src_normal="res://assets/characters/master2/master_vanguard_normal.png"
+roughness/mode=0
+roughness/src_normal=""
 process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
@@ -41,4 +40,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1
