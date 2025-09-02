@@ -1,4 +1,4 @@
-import { EAction, EGenericAction } from '../base/enumerators';
+import { EAction } from '../base/enumerators';
 import { ClientSocket } from '../models/clientSocket';
 import { Lobby } from '../models/lobby';
 import { Message } from '../models/message';
@@ -205,6 +205,8 @@ export class ProtocolHelper {
 				gameServer.connectedClients.forEach((el) => {
 					ProtocolHelper.sendLobbyList(gameServer, el);
 				});
+
+				ProtocolHelper.sendLobbyChanged(clientSocket, newLobby);
 			}
 		} catch (err: any) {
 			LoggerHelper.logError(`[ProtocolHelper.createNewLobby()] An error had occurred while parsing a message: ${err}`);
@@ -216,6 +218,7 @@ export class ProtocolHelper {
 			const lobby = gameServer.getLobbyByPlayerId(clientSocket.id);
 			if (!!lobby) {
 				lobby.removePlayer(clientSocket.id);
+				ProtocolHelper.sendLobbyChanged(clientSocket, null);
 
 				const createLobbySuccessMessage = new Message(EAction.LeaveLobby, {});
 				clientSocket.socket.send(createLobbySuccessMessage.toString());
@@ -229,6 +232,7 @@ export class ProtocolHelper {
 								webId: clientSocket.id,
 							}).toString()
 						);
+						// ProtocolHelper.sendLobbyChanged(clientSocket, lobby);
 					}
 				}
 				// Alert all clients the changes to the lobbies
@@ -257,6 +261,7 @@ export class ProtocolHelper {
 						lobby: lobbyToJoin,
 					});
 					clientSocket.socket.send(joinLobbySuccessMessage.toString());
+
 					// Alert all clients the changes to the lobbies
 					gameServer.connectedClients.forEach((el) => ProtocolHelper.sendLobbyList(gameServer, el));
 					lobbyToJoin.players.forEach((el) => {
@@ -380,12 +385,18 @@ export class ProtocolHelper {
 	}
 
 	// NEW: TODO: should basically spread whatever info we give it... "meta" property for generic usage?
-	public static playerUpdateInfo(_gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) {
+	public static playerUpdateInfo(gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) {
 		try {
 			if (message.payload.metadata) {
 				clientSocket.metadata = { ...clientSocket.metadata, ...message.payload.metadata };
 			}
-			// clientSocket.socket.send(newPeerConnection.toString());
+			if (clientSocket.lobbyId) {
+				var lobby: Lobby = gameServer.getLobbyById(clientSocket.lobbyId);
+				for (const next_player of lobby.players) {
+					ProtocolHelper.sendLobbyChanged(next_player, lobby);
+				}
+			}
+			// clientSocket.socket(newPeerConnection.toString());
 		} catch (err: any) {
 			LoggerHelper.logError(`[ProtocolHelper.sendnewPeerConnection()] An error had occurred while parsing a message: ${err}`);
 		}
@@ -428,12 +439,17 @@ export class ProtocolHelper {
 	 * @param clientSocket
 	 * @param lobbyToJoin
 	 */
-	public static sendLobbyChanged(clientSocket: ClientSocket, lobbyToJoin: Lobby) {
+	public static sendLobbyChanged(clientSocket: ClientSocket, lobbyToGet?: Lobby) {
 		try {
-			const lobbyListMessage: Message = new Message(EAction.LobbyChanged, {
-				lobby: lobbyToJoin.get(),
-			});
-			clientSocket.socket.send(lobbyListMessage.toString());
+			if (lobbyToGet) {
+				const lobbyListMessage: Message = new Message(EAction.LobbyChanged, {
+					lobby: lobbyToGet.get(),
+				});
+				clientSocket.socket.send(lobbyListMessage.toString());
+			} else {
+				const lobbyListEmpty: Message = new Message(EAction.LobbyChanged, {});
+				clientSocket.socket.send(lobbyListEmpty.toString());
+			}
 		} catch (err: any) {
 			LoggerHelper.logError(`[ProtocolHelper.sendLobbyChanged()] An error had occurred while parsing a message: ${err}`);
 		}

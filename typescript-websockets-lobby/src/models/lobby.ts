@@ -30,7 +30,7 @@ export class Lobby {
 			this.players.push(newPlayer);
 
 			// And tell all players to get their own lobby.
-			const message = new Message(EAction.GetOwnLobby, {
+			const message = new Message(EAction.LobbyChanged, {
 				lobby: this.get(),
 			});
 			this.players.forEach((el) => el.socket.send(message.toString()));
@@ -48,7 +48,7 @@ export class Lobby {
 				playerToRemove.lobbyId = '';
 
 				// Tell this player that they should get the lobby: TODO: Should it be for everyone?
-				const message = new Message(EAction.GetOwnLobby, {});
+				const message = new Message(EAction.LobbyChanged, {});
 				playerToRemove.socket.send(message.toString());
 			}
 
@@ -62,7 +62,7 @@ export class Lobby {
 			this.players.forEach((el) => el.socket.send(playerLeftMessage.toString()));
 
 			// And tell all players to get their own lobby.
-			const message = new Message(EAction.GetOwnLobby, {
+			const message = new Message(EAction.LobbyChanged, {
 				lobby: this.get(),
 			});
 			this.players.forEach((el) => el.socket.send(message.toString()));

@@ -1,15 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cs3gvi8vdfpwp"]
 
 [ext_resource type="Script" uid="uid://b1gebami61hbr" path="res://game/PlayerCharacter/UI/player_info_item.gd" id="1_bm6jr"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0pf0d"]
-content_margin_left = 5.0
-content_margin_top = 5.0
-content_margin_right = 5.0
-content_margin_bottom = 5.0
-bg_color = Color(0.1, 0.1, 0.1, 0.6)
-border_width_bottom = 1
-corner_detail = 5
+[ext_resource type="StyleBox" uid="uid://d4gownuqxgwu8" path="res://lobby/theme/lobby_player_container_styleboxflat.tres" id="1_onoft"]
 
 [sub_resource type="Gradient" id="Gradient_0pf0d"]
 offsets = PackedFloat32Array(0.44347826, 0.45217392)
@@ -22,7 +14,7 @@ height = 24
 
 [node name="PlayerInfoItem" type="PanelContainer"]
 custom_minimum_size = Vector2(200, 0)
-theme_override_styles/panel = SubResource("StyleBoxFlat_0pf0d")
+theme_override_styles/panel = ExtResource("1_onoft")
 script = ExtResource("1_bm6jr")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
