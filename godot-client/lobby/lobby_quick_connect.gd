@@ -1,5 +1,7 @@
 extends Control
 
+var user_panel_stylebox = preload("res://lobby/theme/lobby_player_container_styleboxflat.tres")
+
 var username_value: String
 var code_value: String
 var current_lobby_code: String
@@ -29,7 +31,7 @@ func _ready() -> void:
 	%ButtonCopy.pressed.connect(func(): DisplayServer.clipboard_set(current_lobby_code))
 	%ButtonPaste.pressed.connect(func(): %InputCode.text = DisplayServer.clipboard_get(); %InputCode.text_changed.emit(str(%InputCode.text)))
 
-	LobbySystem.signal_lobby_own_info.connect(_render_current_lobby_view)
+	LobbySystem.signal_lobby_changed.connect(_render_current_lobby_view)
 	LobbySystem.signal_client_disconnected.connect(func(): _render_connection_light(false))
 	LobbySystem.signal_packet_parsed.connect(func(_packet): _render_connection_light(true))
 	# DEBUG:
@@ -49,10 +51,23 @@ func _quick_host():
 	await get_tree().create_timer(1.0).timeout 
 	LobbySystem.lobby_create()
 
-func _new_user_item(username: String):
+func _create_user_item(username: String, color: String) -> PanelContainer:
+	var user_hbox = HBoxContainer.new()
+	var user_panel = PanelContainer.new()
+	user_panel.add_theme_stylebox_override("panel", user_panel_stylebox)
+
+	var rect = ColorRect.new()
+	rect.custom_minimum_size = Vector2(25.0, 25.0)
+	rect.color = Color.from_string(color, Color.WHITE)
+
 	var user_label = Label.new()
+	user_label.size_flags_horizontal = Control.SIZE_EXPAND
 	user_label.text = username
-	return user_label
+
+	user_hbox.add_child(user_label)
+	user_hbox.add_child(rect)
+	user_panel.add_child(user_hbox)
+	return user_panel
 
 func _render_current_lobby_view(lobby):
 	%ColumnLobby.visible = false
@@ -65,8 +80,8 @@ func _render_current_lobby_view(lobby):
 		current_lobby_code = lobby_id_to_code
 		%LabelLobbyTitle.text = lobby.players[0].username + "'s Lobby"
 		%ColumnLobby.visible = true
-		lobby.players.map(func(player): %LobbyUserList.add_child(_new_user_item(player.username)))
-
+		lobby.players.map(func(player): %LobbyUserList.add_child(_create_user_item(player.username, player.metadata.color)))
+		
 func _render_connection_light(is_user_connected: bool = false):
 	%ConnectionLight.modulate = Color.WHITE
 	if is_user_connected:	
