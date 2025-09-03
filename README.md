@@ -17,16 +17,18 @@
 
 This is it. `andoodev-godot-web-rtc-p2p` is a complete peer-to-peer multiplayer Godot project. It features a full lobby system (in Websockets) and demo FPS game with drop-in-drop-out mesh networking. It even runs in the browser. It's the perfect way to do multiplayer for game jams or other lightweight projects.
 
-<img src="godot-client/webrtc-godot-logo.png" alt="Your image title" width="120"/>
-
 |             Lobby              |            In Game             |
 | :----------------------------: | :----------------------------: |
 | ![](docs/web_rtc_screen_1.png) | ![](docs/web_rtc_screen_2.png) |
 
 ## Try it now:
 
-- Open the to link to the game: https://jonandrewitchio.itch.io/andoodev-web-rtc-p2p (Chrome loads fastest)
-- Connect (username filled in optional)
+|                                                                                    |                                                      |
+| :--------------------------------------------------------------------------------: | :--------------------------------------------------: |
+| <img src="godot-client/webrtc-godot-logo.png" alt="Your image title" width="120"/> | https://jonandrewitchio.itch.io/andoodev-web-rtc-p2p |
+
+- Play the [game on Itch.io](https://jonandrewitchio.itch.io/andoodev-web-rtc-p2p)
+- Connect
 - Create Lobby
 - Send your friend the same link
 - They join
