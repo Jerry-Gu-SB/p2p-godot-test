@@ -83,8 +83,8 @@ export class ProtocolHelper {
 				case EAction.JoinLobby:
 					ProtocolHelper.joinExistingLobby(gameServer, clientSocket, message);
 					break;
-				case EAction.Heartbeat:
-					ProtocolHelper.processHeartbeat(gameServer, clientSocket);
+				case EAction.LobbyChanged:
+					ProtocolHelper.updateLobbyData(gameServer, clientSocket, message);
 					break;
 				case EAction.PlayerInfoUpdate:
 					ProtocolHelper.playerUpdateInfo(gameServer, clientSocket, message);
@@ -213,12 +213,35 @@ export class ProtocolHelper {
 		}
 	};
 
+	private static updateLobbyData = (gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) => {
+		try {
+			const lobby = gameServer.getLobbyByPlayerId(clientSocket.id);
+			const isHost = lobby?.players[0].id === clientSocket.id;
+			if (!isHost) {
+				LoggerHelper.logWarn(`Client ${clientSocket.id} requested to change a lobby while not a host.`);
+				return false;
+			}
+
+			if (!message.payload.lobbyData) {
+				return false;
+			}
+
+			lobby.lobbyData = { ...lobby.lobbyData, ...message.payload.lobbyData };
+
+			lobby.players.forEach((el) => {
+				ProtocolHelper.sendLobbyChanged(el, lobby);
+			});
+		} catch (err: any) {
+			LoggerHelper.logError(`[ProtocolHelper.updateLobbyData()] An error had occurred while parsing a message: ${err}`);
+		}
+	};
+
 	private static leaveLobby = (gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) => {
 		try {
 			const lobby = gameServer.getLobbyByPlayerId(clientSocket.id);
 			if (!!lobby) {
 				lobby.removePlayer(clientSocket.id);
-				ProtocolHelper.sendLobbyChanged(clientSocket, null);
+				ProtocolHelper.sendLobbyChanged(clientSocket);
 
 				const createLobbySuccessMessage = new Message(EAction.LeaveLobby, {});
 				clientSocket.socket.send(createLobbySuccessMessage.toString());

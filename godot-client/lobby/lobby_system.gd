@@ -19,7 +19,7 @@ signal signal_lobby_game_started
 signal signal_network_create_new_peer_connection
 signal signal_packet_parsed(message)
 
-enum ACTION { 
+enum ACTION {
 	Confirm,
 	GetUsers,
 	PlayerJoin,
@@ -42,7 +42,7 @@ enum ACTION {
 
 #const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
 const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jonandrewdavis.workers.dev'
-const WEB_SOCKET_SECRET_KEY = "9317e4d6-83b3-4188-94c4-353a2798d3c1" 
+const WEB_SOCKET_SECRET_KEY = "9317e4d6-83b3-4188-94c4-353a2798d3c1"
 #NOTE: Not an actual secret. Just to prevent random connections, but change if you self host
 
 # Patterned [stun:URI, turn:URI], for now we just use free unlimited STUN
@@ -50,7 +50,7 @@ const STUN_TURN_SERVER_URLS = ['stun:stun.cloudflare.com']
 
 var web_rtc_peer: WebRTCMultiplayerPeer
 
-var ws_peer: WebSocketPeer 
+var ws_peer: WebSocketPeer
 var ws_peer_id: String
 var ws_connection_validated = false
 
@@ -63,7 +63,7 @@ func _ready():
 	tree_exited.connect(_ws_close_connection)
 
 func _process(_delta):
-	ws_peer.poll()	
+	ws_peer.poll()
 	var state: WebSocketPeer.State = ws_peer.get_ready_state()
 	match state:
 		WebSocketPeer.STATE_CONNECTING:
@@ -97,15 +97,15 @@ func _ws_parse_packet():
 		_ws_process_packet(packet_to_json)
 		signal_packet_parsed.emit(packet_to_json)
 	else:
-		push_warning("Invalid message from server received")		
+		push_warning("Invalid message from server received")
 
 # TODO: I think this match statement could be made more straightforward.
 # TODO: Error handling (involves server refactor)
 func _ws_process_packet(message):
 	var string_enum = ACTION.keys().find(message.action)
-	match(string_enum):
+	match (string_enum):
 		ACTION.Confirm:
-			if  message.payload.has("webId"):
+			if message.payload.has("webId"):
 				signal_client_connection_confirmed.emit(message.payload.webId)
 			else:
 				_ws_close_connection(1000, "Couldn't authenticate")
@@ -128,7 +128,7 @@ func _ws_process_packet(message):
 				signal_lobby_joined.emit(message.payload.lobby)
 		ACTION.LobbyChanged:
 			if message.payload.has("lobby"):
-				signal_lobby_changed.emit(message.payload.lobby)			
+				signal_lobby_changed.emit(message.payload.lobby)
 			else:
 				signal_lobby_changed.emit(null)
 		ACTION.GetOwnLobby:
@@ -175,7 +175,7 @@ func user_connect(username: String):
 	if _is_web_socket_connected():
 		return
 
-	ws_peer = WebSocketPeer.new()	
+	ws_peer = WebSocketPeer.new()
 	ws_peer.connect_to_url(WEB_SOCKET_SERVER_URL)
 	if not username:
 		current_username = generate_random_name()
@@ -188,8 +188,8 @@ func user_connect(username: String):
 # Currently it still works because the server will boot connections that don't validate.
 func user_confirm_connection():
 	_ws_send_action(ACTION.Confirm, {
-		"secretKey" : WEB_SOCKET_SECRET_KEY, 
-		"username" : current_username, 
+		"secretKey": WEB_SOCKET_SECRET_KEY,
+		"username": current_username,
 	})
 	ws_connection_validated = true
 	_ws_send_action(ACTION.GetUsers)
@@ -202,7 +202,7 @@ func user_disconnect():
 	
 	signal_user_list_changed.emit([])
 	signal_lobby_list_changed.emit([])
-	signal_lobby_own_info.emit(null)	
+	signal_lobby_changed.emit([])
 	signal_client_disconnected.emit()
 	
 
@@ -210,7 +210,7 @@ func lobby_create():
 	_ws_send_action(ACTION.CreateLobby)
 
 func lobby_join(id: String):
-	_ws_send_action(ACTION.JoinLobby, { "id" : id })
+	_ws_send_action(ACTION.JoinLobby, {"id": id})
 
 func lobby_leave():
 	_ws_send_action(ACTION.LeaveLobby)
@@ -229,10 +229,13 @@ func lobbies_get():
 	
 func lobby_send_chat(message: String):
 	if message.length():
-		_ws_send_action(ACTION.MessageToLobby, { "message": message })
+		_ws_send_action(ACTION.MessageToLobby, {"message": message})
 
 func user_update_info(metadata: Variant):
-	_ws_send_action(ACTION.PlayerInfoUpdate, {"metadata": metadata })
+	_ws_send_action(ACTION.PlayerInfoUpdate, {"metadata": metadata})
+
+func lobby_update_data(lobbyData: Variant):
+	_ws_send_action(ACTION.LobbyChanged, {"lobbyData": lobbyData})
 
 
 #region WebRTCMultiplayerPeer
@@ -247,7 +250,7 @@ func _network_create_new_peer_connection(id: int):
 	if id != int(ws_peer_id):
 		var new_peer_connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
 		new_peer_connection.initialize({
-			"iceServers" : [{ "urls": STUN_TURN_SERVER_URLS }]
+			"iceServers": [ {"urls": STUN_TURN_SERVER_URLS}]
 		})
 		print("binding id " + str(id) + " my id is " + str(ws_peer_id))
 
@@ -270,24 +273,24 @@ func _offerCreated(type, data, id: int):
 
 func _sendOffer(id: int, data):
 	var message = {
-		"peer" : id,
-		"orgPeer" : ws_peer_id,
+		"peer": id,
+		"orgPeer": ws_peer_id,
 		"data": data,
 	}
 	_ws_send_action(ACTION.Offer, message)
 
 func _sendAnswer(id: int, data):
 	var message = {
-		"peer" : id, 
-		"orgPeer" : ws_peer_id, 
+		"peer": id,
+		"orgPeer": ws_peer_id,
 		"data": data,
 	}
 	_ws_send_action(ACTION.Answer, message)
 
 func _iceCandidateCreated(midName, indexName, sdpName, id: int):
 	var message = {
-		"peer" : id,
-		"orgPeer" : ws_peer_id,
+		"peer": id,
+		"orgPeer": ws_peer_id,
 		"mid": midName,
 		"index": indexName,
 		"sdp": sdpName,
@@ -299,9 +302,9 @@ func _iceCandidateCreated(midName, indexName, sdpName, id: int):
 
 func generate_random_name():
 	#@Emi's fantastic names 
-	var Emi1: Array[String] = ['Re','Dar','Me','Su', 'Ven']
-	var Emi2: Array[String] = ['ir','ton','me', 'so']
-	var Emi3: Array[String] = ['tz','s','er', 'ky']
+	var Emi1: Array[String] = ['Re', 'Dar', 'Me', 'Su', 'Ven']
+	var Emi2: Array[String] = ['ir', 'ton', 'me', 'so']
+	var Emi3: Array[String] = ['tz', 's', 'er', 'ky']
 	var r1 = randi_range(0, Emi1.size() - 1)
 	var r2 = randi_range(0, Emi2.size() - 1)
 	var r3 = randi_range(0, Emi3.size() - 1)

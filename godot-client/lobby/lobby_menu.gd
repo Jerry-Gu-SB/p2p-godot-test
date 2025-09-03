@@ -27,6 +27,9 @@ func _ready() -> void:
 	
 	%ColumnLobby.hide()
 	
+	%ButtonBotRemove.pressed.connect(func(): _change_bot_count(true))
+	%ButtonBotAdd.pressed.connect(func(): _change_bot_count())
+	
 	# Renders
 	LobbySystem.signal_client_disconnected.connect(func(): _render_connection_light(false))
 	LobbySystem.signal_packet_parsed.connect(func(_packet): _render_connection_light(true))
@@ -113,7 +116,10 @@ func _render_current_lobby_view(lobby):
 		%ColumnLobby.visible = true
 		for player in lobby.players:
 			var new_color = player.metadata.get('color') if player.metadata.get('color') else '#ffffff'
-			%LobbyUserList.add_child(_create_user_item(player.username, new_color))		
+			%LobbyUserList.add_child(_create_user_item(player.username, new_color)) 
+
+		var new_bot_count = lobby.lobbyData.get('bot_count') if lobby.lobbyData.get('bot_count') else '0'
+		%DisplayBotCount.text = new_bot_count
 
 func _render_connection_light(is_user_connected: bool = false):
 	%ConnectionLight.modulate = Color.WHITE
@@ -121,6 +127,14 @@ func _render_connection_light(is_user_connected: bool = false):
 		await get_tree().create_timer(0.08).timeout
 		%ConnectionLight.modulate = Color.GREEN
 
+func _change_bot_count(decrease: bool = false):
+	var new_bot_count
+	if decrease: 
+		new_bot_count = int(%DisplayBotCount.text) - 1
+	else:
+		new_bot_count = int(%DisplayBotCount.text) + 1
+	LobbySystem.lobby_update_data({"bot_count": str(clampi(new_bot_count, 0, 12))})
+	
 func _debug(_message):
 	#print('[DEBUG LOBBY PACKET]: ', _message)
 	pass

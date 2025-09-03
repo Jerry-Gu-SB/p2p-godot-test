@@ -9,11 +9,13 @@ export class Lobby {
 	players: ClientSocket[] = [];
 	isGameStarted: boolean = false;
 	id: String = '';
+	lobbyData: any = {};
 
 	constructor(id: String, players: ClientSocket[] = []) {
 		try {
 			this.players = players;
 			this.id = id;
+			this.lobbyData = {};
 		} catch (err) {
 			LoggerHelper.logError(`An error had occurred while creating the Lobby: ${err}`);
 		}
@@ -70,12 +72,14 @@ export class Lobby {
 			LoggerHelper.logError(`An error had occurred while removing a player from the Lobby: ${err}`);
 		}
 	}
+
 	get = () => {
 		try {
 			return {
 				id: this.id,
 				isGameStarted: this.isGameStarted,
 				players: this.players,
+				lobbyData: this.lobbyData,
 			};
 		} catch (err) {
 			LoggerHelper.logError(`An error had occurred while getting the lobby: ${err}`);
