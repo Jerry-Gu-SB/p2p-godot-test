@@ -37,7 +37,8 @@ enum ACTION {
 	NewPeerConnection,
 	Offer,
 	Answer,
-	Candidate
+	Candidate,
+	KickPlayer,
 }
 
 #const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
@@ -236,6 +237,9 @@ func user_update_info(metadata: Variant):
 
 func lobby_update_data(lobbyData: Variant):
 	_ws_send_action(ACTION.LobbyChanged, {"lobbyData": lobbyData})
+
+func lobby_kick(id: String):
+	_ws_send_action(ACTION.KickPlayer, {"id": id})
 
 
 #region WebRTCMultiplayerPeer

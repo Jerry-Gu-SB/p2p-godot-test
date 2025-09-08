@@ -6,10 +6,11 @@ import { Message } from './message';
 import { LoggerHelper } from '../helpers/logger-helper';
 
 export class Lobby {
-	players: ClientSocket[] = [];
-	isGameStarted: boolean = false;
 	id: String = '';
+	players: ClientSocket[] = [];
+	playerIdsBanned: string[] = [];
 	lobbyData: any = {};
+	isGameStarted: boolean = false;
 
 	constructor(id: String, players: ClientSocket[] = []) {
 		try {
@@ -23,6 +24,10 @@ export class Lobby {
 
 	addPlayer(newPlayer: ClientSocket) {
 		try {
+			// Do not let a kicked player rejoin
+			if (this.playerIdsBanned.find((bannedId) => bannedId === newPlayer.id)) {
+				return false;
+			}
 			// Stop if the player is already in the lobby
 			if (this.players.find((el) => el.id === newPlayer.id)) {
 				return false;

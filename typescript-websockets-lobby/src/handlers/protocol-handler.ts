@@ -102,6 +102,9 @@ export class ProtocolHelper {
 					// console.log('DEBUG OFFER', gameServer, clientSocket, message)
 					ProtocolHelper.sendOfferAnswerOrCandidate(gameServer, clientSocket, message);
 					break;
+				case EAction.KickPlayer:
+					ProtocolHelper.kickPlayer(gameServer, clientSocket, message);
+					break;
 			}
 		} catch (err) {
 			LoggerHelper.logError(`[ProtocolHelper.parseReceivingMessage()] An error had occurred while parsing a message: ${err}`);
@@ -243,8 +246,8 @@ export class ProtocolHelper {
 				lobby.removePlayer(clientSocket.id);
 				ProtocolHelper.sendLobbyChanged(clientSocket);
 
-				const createLobbySuccessMessage = new Message(EAction.LeaveLobby, {});
-				clientSocket.socket.send(createLobbySuccessMessage.toString());
+				const leaveLobbySuccessMessage = new Message(EAction.LeaveLobby, {});
+				clientSocket.socket.send(leaveLobbySuccessMessage.toString());
 				// If the lobby is empty, erase it
 				if (lobby.players.length === 0) {
 					gameServer.removeLobby(lobby.id);
@@ -259,6 +262,26 @@ export class ProtocolHelper {
 					}
 				}
 				// Alert all clients the changes to the lobbies
+				gameServer.connectedClients.forEach((el) => ProtocolHelper.sendLobbyList(gameServer, el));
+			}
+		} catch (err: any) {
+			LoggerHelper.logError(`[ProtocolHelper.leaveLobby()] An error had occurred while parsing a message: ${err}`);
+		}
+	};
+
+	private static kickPlayer = (gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) => {
+		try {
+			const lobby = gameServer.getLobbyByPlayerId(clientSocket.id);
+			const isHost = lobby?.players[0].id === clientSocket.id;
+
+			if (!isHost) {
+				return;
+			}
+
+			if (!!lobby) {
+				lobby.playerIdsBanned.push(message.payload.id);
+				lobby.removePlayer(message.payload.id);
+
 				gameServer.connectedClients.forEach((el) => ProtocolHelper.sendLobbyList(gameServer, el));
 			}
 		} catch (err: any) {

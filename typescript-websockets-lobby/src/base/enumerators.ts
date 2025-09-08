@@ -21,4 +21,5 @@ export enum EAction {
 	Offer = 'Offer', // 14
 	Answer = 'Answer', // 15
 	Candidate = 'Candidate', // 16
+	KickPlayer = 'KickPlayer', // 17
 }

@@ -65,9 +65,12 @@ func _render_user_list(users):
 			%UserList.add_child(user_label)
 
 # TODO: This is too involved. Rework into a preload.
-func _create_user_item(username: String, color: String) -> PanelContainer:
+func _create_user_item(username: String, color: String, id: String) -> PanelContainer:
 	var user_hbox = HBoxContainer.new()
 	var user_panel = PanelContainer.new()
+	var kick_button = Button.new()
+	kick_button.text = 'Kick'
+	kick_button.pressed.connect(func(): LobbySystem.lobby_kick(id))
 	user_panel.add_theme_stylebox_override("panel", user_panel_stylebox)
 
 	var rect = ColorRect.new()
@@ -79,8 +82,11 @@ func _create_user_item(username: String, color: String) -> PanelContainer:
 	user_label.text = username
 
 	user_hbox.add_child(user_label)
+
 	user_hbox.add_child(rect)
+	user_hbox.add_child(kick_button)
 	user_panel.add_child(user_hbox)
+	
 	return user_panel
 
 func _new_lobby_item(lobby): # Typed Dict for param here?
@@ -116,7 +122,7 @@ func _render_current_lobby_view(lobby):
 		%ColumnLobby.visible = true
 		for player in lobby.players:
 			var new_color = player.metadata.get('color') if player.metadata.get('color') else '#ffffff'
-			%LobbyUserList.add_child(_create_user_item(player.username, new_color)) 
+			%LobbyUserList.add_child(_create_user_item(player.username, new_color, player.id)) 
 
 		var new_bot_count = lobby.lobbyData.get('bot_count') if lobby.lobbyData.get('bot_count') else '0'
 		%DisplayBotCount.text = new_bot_count
