@@ -36,6 +36,7 @@ func _ready() -> void:
 	LobbySystem.signal_lobby_list_changed.connect(_render_lobby_list)
 	LobbySystem.signal_lobby_changed.connect(_render_current_lobby_view)
 	LobbySystem.signal_user_list_changed.connect(_render_user_list)
+	LobbySystem.signal_lobby_get_kicked.connect(func(): print('you were kicked'))
 
 	# REACTIVITY
 	# Refetch user list and lobbies if anyone leaves or joins

@@ -15,6 +15,7 @@ signal signal_lobby_chat(chat_user, chat_text)
 signal signal_lobby_changed(lobby)
 signal signal_lobby_own_info(lobby)
 signal signal_lobby_game_started
+signal signal_lobby_get_kicked
 
 signal signal_network_create_new_peer_connection
 signal signal_packet_parsed(message)
@@ -157,6 +158,8 @@ func _ws_process_packet(message):
 			web_rtc_peer.get_peer(int(message.payload.orgPeer)).connection.set_remote_description("answer", message.payload.data)
 		ACTION.Candidate:
 			web_rtc_peer.get_peer(int(message.payload.orgPeer)).connection.add_ice_candidate(message.payload.mid, message.payload.index, message.payload.sdp)
+		ACTION.KickPlayer:
+			signal_lobby_get_kicked.emit()
 
 func _ws_send_action(action: ACTION, payload: Dictionary = {}):
 	if _is_web_socket_connected():

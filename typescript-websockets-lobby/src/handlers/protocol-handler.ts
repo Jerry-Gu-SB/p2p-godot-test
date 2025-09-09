@@ -273,6 +273,7 @@ export class ProtocolHelper {
 		try {
 			const lobby = gameServer.getLobbyByPlayerId(clientSocket.id);
 			const isHost = lobby?.players[0].id === clientSocket.id;
+			const clientSocketToKick = lobby?.players.find((client) => client.id === message.payload.id);
 
 			if (!isHost) {
 				return;
@@ -281,6 +282,9 @@ export class ProtocolHelper {
 			if (!!lobby) {
 				lobby.playerIdsBanned.push(message.payload.id);
 				lobby.removePlayer(message.payload.id);
+
+				const kickMessage = new Message(EAction.KickPlayer, {});
+				clientSocketToKick?.socket.send(kickMessage.toString());
 
 				gameServer.connectedClients.forEach((el) => ProtocolHelper.sendLobbyList(gameServer, el));
 			}
