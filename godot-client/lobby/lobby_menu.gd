@@ -1,8 +1,8 @@
 extends Control
 
-var user_panel_stylebox = preload("res://lobby/theme/lobby_player_container_styleboxflat.tres")
 
 var username_value: String
+var lobby_player_row = preload("res://lobby/lobby_player_row/lobby_player_row.tscn")
 
 func _ready() -> void:
 	var buttons = [
@@ -36,7 +36,6 @@ func _ready() -> void:
 	LobbySystem.signal_lobby_list_changed.connect(_render_lobby_list)
 	LobbySystem.signal_lobby_changed.connect(_render_current_lobby_view)
 	LobbySystem.signal_user_list_changed.connect(_render_user_list)
-	LobbySystem.signal_lobby_get_kicked.connect(func(): print('you were kicked'))
 
 	# REACTIVITY
 	# Refetch user list and lobbies if anyone leaves or joins
@@ -64,31 +63,6 @@ func _render_user_list(users):
 			var user_label = Label.new()
 			user_label.text = user.username
 			%UserList.add_child(user_label)
-
-# TODO: This is too involved. Rework into a preload.
-func _create_user_item(username: String, color: String, id: String) -> PanelContainer:
-	var user_hbox = HBoxContainer.new()
-	var user_panel = PanelContainer.new()
-	var kick_button = Button.new()
-	kick_button.text = 'Kick'
-	kick_button.pressed.connect(func(): LobbySystem.lobby_kick(id))
-	user_panel.add_theme_stylebox_override("panel", user_panel_stylebox)
-
-	var rect = ColorRect.new()
-	rect.custom_minimum_size = Vector2(25.0, 25.0)
-	rect.color = Color.from_string(color, Color.WHITE)
-
-	var user_label = Label.new()
-	user_label.size_flags_horizontal = Control.SIZE_EXPAND
-	user_label.text = username
-
-	user_hbox.add_child(user_label)
-
-	user_hbox.add_child(rect)
-	user_hbox.add_child(kick_button)
-	user_panel.add_child(user_hbox)
-	
-	return user_panel
 
 func _new_lobby_item(lobby): # Typed Dict for param here?
 	var lobby_container = VBoxContainer.new()
@@ -123,7 +97,12 @@ func _render_current_lobby_view(lobby):
 		%ColumnLobby.visible = true
 		for player in lobby.players:
 			var new_color = player.metadata.get('color') if player.metadata.get('color') else '#ffffff'
-			%LobbyUserList.add_child(_create_user_item(player.username, new_color, player.id)) 
+			var new_lobby_player_row = lobby_player_row.instantiate()
+			new_lobby_player_row.name = player.id
+			new_lobby_player_row.peer_id = player.id 
+			new_lobby_player_row.username = player.username
+			new_lobby_player_row.color = new_color
+			%LobbyUserList.add_child(new_lobby_player_row, true) 
 
 		var new_bot_count = lobby.lobbyData.get('bot_count') if lobby.lobbyData.get('bot_count') else '0'
 		%DisplayBotCount.text = new_bot_count

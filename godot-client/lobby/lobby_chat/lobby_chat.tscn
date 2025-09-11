@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://b5bs8xlgxmi3q"]
 
-[ext_resource type="Script" uid="uid://ca7nq4unnss03" path="res://lobby/lobby_chat.gd" id="1_dphqa"]
+[ext_resource type="Script" uid="uid://ca7nq4unnss03" path="res://lobby/lobby_chat/lobby_chat.gd" id="1_dphqa"]
 [ext_resource type="FontFile" uid="uid://bnudr3myap7vs" path="res://lobby/theme/Strait-Regular.ttf" id="1_qg0sw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ixe1"]

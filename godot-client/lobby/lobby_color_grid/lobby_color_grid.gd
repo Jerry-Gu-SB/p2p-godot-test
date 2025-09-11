@@ -7,7 +7,6 @@ func _ready() -> void:
 		LobbySystem.signal_client_connection_confirmed.connect(func(_lobbyId): choose_random_color())
 	
 	var new_toggle_group = ButtonGroup.new()
-
 	for color_string: Color in colors:
 		var new_button = Button.new()
 		new_button.custom_minimum_size = Vector2(30.0, 30.0)

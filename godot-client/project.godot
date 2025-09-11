@@ -35,8 +35,8 @@ window/vsync/vsync_mode=0
 [file_customization]
 
 folder_colors={
-"res://game/": "green",
-"res://lobby/": "pink"
+"res://game/": "red",
+"res://lobby/": "green"
 }
 
 [input]

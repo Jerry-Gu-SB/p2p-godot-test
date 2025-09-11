@@ -12,7 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://jo7livkwx30u" path="res://game/assets/sound/hitmarker.mp3" id="9_3sa24"]
 [ext_resource type="Theme" uid="uid://b3kq74llqlv3x" path="res://lobby/theme/MinimalUI.tres" id="9_xyb3v"]
 [ext_resource type="AudioStream" uid="uid://dfrym40wh1pg2" path="res://game/assets/sound/headshot_ping.mp3" id="10_fuqax"]
-[ext_resource type="PackedScene" uid="uid://b5bs8xlgxmi3q" path="res://lobby/lobby_chat.tscn" id="12_2lepv"]
+[ext_resource type="PackedScene" uid="uid://b5bs8xlgxmi3q" path="res://lobby/lobby_chat/lobby_chat.tscn" id="12_2lepv"]
 [ext_resource type="AudioStream" uid="uid://cw0fa6ee3vbax" path="res://game/assets/sound/hit-by-a-wood.mp3" id="13_pp4qo"]
 
 [sub_resource type="Gradient" id="Gradient_yswgc"]

@@ -275,7 +275,7 @@ export class ProtocolHelper {
 			const isHost = lobby?.players[0].id === clientSocket.id;
 			const clientSocketToKick = lobby?.players.find((client) => client.id === message.payload.id);
 
-			if (!isHost) {
+			if (!isHost || lobby.players.length < 2) {
 				return;
 			}
 
@@ -285,6 +285,13 @@ export class ProtocolHelper {
 
 				const kickMessage = new Message(EAction.KickPlayer, {});
 				clientSocketToKick?.socket.send(kickMessage.toString());
+
+				const messageLobbyEvent = new Message(EAction.LobbyEvent, {
+					message: clientSocketToKick?.username + ' was kicked from the game.',
+				});
+				lobby.players.forEach((el) => {
+					el.socket.send(messageLobbyEvent.toString());
+				});
 
 				gameServer.connectedClients.forEach((el) => ProtocolHelper.sendLobbyList(gameServer, el));
 			}

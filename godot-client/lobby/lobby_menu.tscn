@@ -5,7 +5,7 @@
 [ext_resource type="StyleBox" uid="uid://dltee5tb5lpnf" path="res://lobby/theme/lobby_panel_container_styleboxflat.tres" id="3_7ixe1"]
 [ext_resource type="Shader" uid="uid://cejq1gisa18xi" path="res://lobby/theme/background.gdshader" id="4_a04cy"]
 [ext_resource type="Texture2D" uid="uid://cc5ro6riiqfsg" path="res://game/assets/environment/rust_preview.jpg" id="5_j0pei"]
-[ext_resource type="PackedScene" uid="uid://b5bs8xlgxmi3q" path="res://lobby/lobby_chat.tscn" id="6_j0pei"]
+[ext_resource type="PackedScene" uid="uid://b5bs8xlgxmi3q" path="res://lobby/lobby_chat/lobby_chat.tscn" id="6_j0pei"]
 [ext_resource type="PackedScene" uid="uid://cr0rjm7booup1" path="res://lobby/lobby_color_grid/lobby_color_grid.tscn" id="6_j2isk"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_j2isk"]

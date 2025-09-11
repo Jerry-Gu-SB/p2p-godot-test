@@ -5,7 +5,7 @@
 [ext_resource type="StyleBox" uid="uid://dltee5tb5lpnf" path="res://lobby/theme/lobby_panel_container_styleboxflat.tres" id="3_fhgty"]
 [ext_resource type="Shader" uid="uid://cejq1gisa18xi" path="res://lobby/theme/background.gdshader" id="3_x0kp3"]
 [ext_resource type="PackedScene" uid="uid://cr0rjm7booup1" path="res://lobby/lobby_color_grid/lobby_color_grid.tscn" id="5_kaq8o"]
-[ext_resource type="PackedScene" uid="uid://b5bs8xlgxmi3q" path="res://lobby/lobby_chat.tscn" id="6_qwr24"]
+[ext_resource type="PackedScene" uid="uid://b5bs8xlgxmi3q" path="res://lobby/lobby_chat/lobby_chat.tscn" id="6_qwr24"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kaq8o"]
 shader = ExtResource("3_x0kp3")

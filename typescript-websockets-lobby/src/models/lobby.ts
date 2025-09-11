@@ -37,10 +37,16 @@ export class Lobby {
 			this.players.push(newPlayer);
 
 			// And tell all players to get their own lobby.
-			const message = new Message(EAction.LobbyChanged, {
+			const messageChanged = new Message(EAction.LobbyChanged, {
 				lobby: this.get(),
 			});
-			this.players.forEach((el) => el.socket.send(message.toString()));
+			const messageLobbyEvent = new Message(EAction.LobbyEvent, {
+				message: newPlayer.username + ' just joined the lobby.',
+			});
+			this.players.forEach((el) => {
+				el.socket.send(messageChanged.toString());
+				el.socket.send(messageLobbyEvent.toString());
+			});
 
 			return true;
 		} catch (err) {
@@ -57,22 +63,28 @@ export class Lobby {
 				// Tell this player that they should get the lobby: TODO: Should it be for everyone?
 				const message = new Message(EAction.LobbyChanged, {});
 				playerToRemove.socket.send(message.toString());
+				// remove the player from the list
+				const index = this.players.findIndex((el) => el.id === idPlayer);
+				if (index !== -1) {
+					this.players.splice(index, 1);
+				}
+
+				// TODO: THis sends the "playerLeft" which is for disconnects.... make a specific to leaving lobby event and remove messageLobbyEvent
+				// const playerLeftMessage = new Message(EAction.PlayerLeft, {});
+				// this.players.forEach((el) => el.socket.send(playerLeftMessage.toString()));
+
+				// And tell all players to get their own lobby.
+				const messageChanged = new Message(EAction.LobbyChanged, {
+					lobby: this.get(),
+				});
+				const messageLobbyEvent = new Message(EAction.LobbyEvent, {
+					message: playerToRemove?.username + ' left.',
+				});
+				this.players.forEach((el) => {
+					el.socket.send(messageChanged.toString());
+					el.socket.send(messageLobbyEvent.toString());
+				});
 			}
-
-			// remove the player from the list
-			const index = this.players.findIndex((el) => el.id === idPlayer);
-			if (index !== -1) {
-				this.players.splice(index, 1);
-			}
-
-			const playerLeftMessage = new Message(EAction.PlayerLeft, {});
-			this.players.forEach((el) => el.socket.send(playerLeftMessage.toString()));
-
-			// And tell all players to get their own lobby.
-			const message = new Message(EAction.LobbyChanged, {
-				lobby: this.get(),
-			});
-			this.players.forEach((el) => el.socket.send(message.toString()));
 		} catch (err) {
 			LoggerHelper.logError(`An error had occurred while removing a player from the Lobby: ${err}`);
 		}
