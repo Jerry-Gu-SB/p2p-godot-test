@@ -364,6 +364,11 @@ export class ProtocolHelper {
 							// });
 						}, 1000);
 					}
+				} else {
+					const joinLobbyFailureMessage = new Message(EAction.JoinLobby, {
+						success: false,
+					});
+					clientSocket.socket.send(joinLobbyFailureMessage.toString());
 				}
 			} else {
 				const joinLobbyFailureMessage = new Message(EAction.JoinLobby, {

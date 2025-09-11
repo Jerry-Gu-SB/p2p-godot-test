@@ -67,3 +67,66 @@ Solution: try: `yarn set version 4.5`
 ### Resources:
 
 - Heavily adapted from: https://github.com/Hairic95/Godot-WebSocket-Multiplayer-Template
+
+### Legacy Actions (may be incomplete)
+
+```gdscript
+enum ACTION {
+	Confirm,
+	GetUsers,
+	PlayerJoin,
+	PlayerLeft,
+	GetLobbies,
+	GetOwnLobby,
+	CreateLobby,
+	JoinLobby,
+	LeaveLobby,
+	LobbyChanged,
+	GameStarted,
+	MessageToLobby,
+	PlayerInfoUpdate,
+	# WebRTC Actions:
+	NewPeerConnection,
+	Offer,
+	Answer,
+	Candidate,
+	KickPlayer,
+	LobbyEvent,
+}
+```
+
+### TODO: New Actions
+
+```
+enum ACTION {
+  UserConnect,
+  UserConfirm,
+  UsersGet,
+  UserDisconnect,
+  UserDataUpdate,
+
+  LobbiesGet,
+  LobbyGetOwn,
+  LobbyCreate,
+  LobbyJoin,
+  LobbyLeft,
+  LobbyChanged,
+  LobbyUserChanged,
+  LobbyChat,
+  LobbyKick,
+  LobbyLock,
+  LobbyUnlock,
+  LobbyGameStart,
+
+  PeerNewConnection
+  PeerOffer
+  PeerAnswer
+  PeerCandidate
+
+}
+
+```
+
+Note: Past-tense? i.e. LobbyJoined?
+Note: Could be all present tense.
+Note: maybe things that are just emitting are past-tense, where as sendable actions are present.

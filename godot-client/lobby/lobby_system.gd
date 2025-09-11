@@ -131,6 +131,9 @@ func _ws_process_packet(message):
 		ACTION.JoinLobby:
 			if message.payload.has("lobby"):
 				signal_lobby_joined.emit(message.payload.lobby)
+			else:
+				# NOTE: message.payload: { "success": false }
+				signal_lobby_joined.emit(null)
 		ACTION.LobbyChanged:
 			if message.payload.has("lobby"):
 				signal_lobby_changed.emit(message.payload.lobby)
