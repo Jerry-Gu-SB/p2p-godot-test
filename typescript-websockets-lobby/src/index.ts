@@ -12,6 +12,7 @@ const CONFIG_PORT = 80;
 export interface Env {
 	WEBSOCKET_SERVER: DurableObjectNamespace<LobbyObject>;
 	SECRET_KEY: string;
+	TURN_KEY: string;
 }
 
 // Formatted like a Godot Peer (int), but toString(), or else Godot will parse it as a float, not int.
@@ -46,6 +47,7 @@ export class LobbyObject extends DurableObject {
 	secretKey: string;
 	currentlyConnectedWebSockets: number;
 	gameServer: GameServerHandler;
+	turnKey: string;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		// This is reset whenever the constructor runs because
@@ -57,6 +59,7 @@ export class LobbyObject extends DurableObject {
 		this.gameServer = new GameServerHandler();
 		this.currentlyConnectedWebSockets = 0;
 		this.secretKey = env.SECRET_KEY;
+		this.turnKey = env.TURN_KEY;
 	}
 
 	async fetch(request: Request): Promise<Response> {
@@ -84,7 +87,7 @@ export class LobbyObject extends DurableObject {
 			// server.send(`[Durable Object] currentlyConnectedWebSockets: ${this.currentlyConnectedWebSockets}`);
 			const decodeMessage = new TextDecoder().decode(event.data as any);
 			const parsedMessage: Message = Message.fromString(decodeMessage.toString());
-			ProtocolHelper.parseReceivingMessage(this.gameServer, clientSocket, parsedMessage, this.secretKey);
+			ProtocolHelper.parseReceivingMessage(this.gameServer, clientSocket, parsedMessage, this.secretKey, this.turnKey);
 		});
 
 		// // If the client closes the connection, the runtime will close the connection too.

@@ -5,6 +5,7 @@ import { Message } from '../models/message';
 
 import { GameServerHandler } from './game-server-handler';
 import { LoggerHelper } from '../helpers/logger-helper';
+import { TurnHelper, TurnResponse } from '../helpers/turn-helper';
 
 export class ProtocolHelper {
 	public static sendPlayerDisconnectToAll = (gameServer: GameServerHandler, playerDisconnectedId: string) => {
@@ -58,7 +59,8 @@ export class ProtocolHelper {
 		gameServer: GameServerHandler,
 		clientSocket: ClientSocket,
 		message: Message,
-		secretKey: string
+		secretKey: string,
+		turnKey: string // TODO: bad
 	) => {
 		try {
 			switch (message.action) {
@@ -94,7 +96,7 @@ export class ProtocolHelper {
 					break;
 				case EAction.GameStarted:
 					LoggerHelper.logInfo('Recieved Lobby Start ' + message);
-					ProtocolHelper.startGameForLobby(gameServer, clientSocket, message);
+					ProtocolHelper.startGameForLobby(gameServer, clientSocket, message, turnKey);
 					break;
 				case EAction.Offer:
 				case EAction.Answer:
@@ -381,7 +383,12 @@ export class ProtocolHelper {
 		}
 	};
 
-	private static startGameForLobby = (gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) => {
+	private static startGameForLobby = async (
+		gameServer: GameServerHandler,
+		clientSocket: ClientSocket,
+		message: Message,
+		turnKey: String
+	) => {
 		try {
 			// const lobbyToStart: Lobby | undefined = gameServer.getLobbyById(message.payload.id);
 			// NOTE: Changed to just pull the lobby ID off of the user
@@ -403,15 +410,24 @@ export class ProtocolHelper {
 				//   });
 
 				if (lobbyToStart.players.length >= 2 && !lobbyToStart.isGameStarted) {
+					const generateTurnCredentials = lobbyToStart.players.map((player_client: ClientSocket) => {
+						return TurnHelper.generate(turnKey);
+					});
+
+					await Promise.all(generateTurnCredentials).then((turnResults) => {
+						lobbyToStart.players.map((clientSocket, i) => {
+							this.sendIceServers(clientSocket, turnResults[i]);
+						});
+					});
+
 					setTimeout(() => {
 						lobbyToStart.isGameStarted = true;
-						lobbyToStart.players.forEach((player) => {
+						lobbyToStart.players.forEach((player_client: ClientSocket) => {
 							// Start
-							ProtocolHelper.sendGameStarted(player); // Note we do not lsiten to this in the client
+							ProtocolHelper.sendGameStarted(player_client); // Note we do not lsiten to this in the client
 
 							// Share all new sendNewPeerConnection
-							var player_client: ClientSocket = player;
-							var current_player_id: string = player.id;
+							var current_player_id: String = player_client.id;
 							for (const next_player of lobbyToStart.players) {
 								if (current_player_id !== next_player.id) {
 									ProtocolHelper.sendNewPeerConnection(player_client, next_player.id);
@@ -493,6 +509,16 @@ export class ProtocolHelper {
 			clientSocket.socket.send(sendGameStartedMessage.toString());
 		} catch (err: any) {
 			LoggerHelper.logError(`[ProtocolHelper.sendGameStarted()] An error had occurred while parsing a message: ${err}`);
+		}
+	}
+
+	public static sendIceServers(clientSocket: ClientSocket, turnResponse: TurnResponse) {
+		try {
+			const sendIceServers: Message = new Message(EAction.SetIceServers, { ...turnResponse });
+			clientSocket.socket.send(sendIceServers.toString());
+			return turnResponse;
+		} catch (err: any) {
+			LoggerHelper.logError(`[ProtocolHelper.sendIceServers()] An error had occurred while sending ice servers: ${err}`);
 		}
 	}
 

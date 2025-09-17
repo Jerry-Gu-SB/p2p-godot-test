@@ -20,6 +20,7 @@ signal signal_lobby_event(message)
 
 signal signal_network_create_new_peer_connection
 signal signal_packet_parsed(message)
+signal signal_set_ice_servers(ice_servers)
 
 
 enum ACTION {
@@ -43,6 +44,7 @@ enum ACTION {
 	Candidate,
 	KickPlayer,
 	LobbyEvent,
+	SetIceServers,
 }
 
 #const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
@@ -50,8 +52,10 @@ const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jonandrewdavis.
 const WEB_SOCKET_SECRET_KEY = "9317e4d6-83b3-4188-94c4-353a2798d3c1"
 #NOTE: Not an actual secret. Just to prevent random connections, but change if you self host
 
-# Patterned [stun:URI, turn:URI], for now we just use free unlimited STUN
-const STUN_TURN_SERVER_URLS = ['stun:stun.cloudflare.com']
+# Patterned [stun:URI, turn:URI], for default to free unlimited STUN
+var STUN_TURN_SERVER_URLS = ['stun:stun.cloudflare.com']
+# This will be overwritten by a SetIceServer event from server if turn is set up in Cloudflare
+var ICE_SERVERS = null
 
 var web_rtc_peer: WebRTCMultiplayerPeer
 
@@ -65,6 +69,7 @@ func _ready():
 	set_process(false)
 	signal_client_connection_confirmed.connect(_network_create_multiplayer_peer)
 	signal_network_create_new_peer_connection.connect(_network_create_new_peer_connection)
+	signal_set_ice_servers.connect(_network_update_ice_servers)
 	tree_exited.connect(_ws_close_connection)
 
 func _process(_delta):
@@ -168,6 +173,8 @@ func _ws_process_packet(message):
 			signal_lobby_get_kicked.emit()
 		ACTION.LobbyEvent:
 			signal_lobby_event.emit(message.payload.message)
+		ACTION.SetIceServers:
+			signal_set_ice_servers.emit(message.payload)
 
 func _ws_send_action(action: ACTION, payload: Dictionary = {}):
 	if _is_web_socket_connected():
@@ -264,9 +271,12 @@ func _network_create_multiplayer_peer(id: String):
 func _network_create_new_peer_connection(id: int):
 	if id != int(ws_peer_id):
 		var new_peer_connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
-		new_peer_connection.initialize({
-			"iceServers": [ {"urls": STUN_TURN_SERVER_URLS}]
-		})
+		
+		# If the SetIceServers event didn't occur, we might need to use the default
+		if ICE_SERVERS == null: 
+			ICE_SERVERS = {"iceServers": [ {"urls": STUN_TURN_SERVER_URLS}]}
+		
+		new_peer_connection.initialize(ICE_SERVERS)
 		print("binding id " + str(id) + " my id is " + str(ws_peer_id))
 
 		new_peer_connection.session_description_created.connect(self._offerCreated.bind(id))
@@ -311,6 +321,9 @@ func _iceCandidateCreated(midName, indexName, sdpName, id: int):
 		"sdp": sdpName,
 	}
 	_ws_send_action(ACTION.Candidate, message)
+
+func _network_update_ice_servers(ice_servers):
+	ICE_SERVERS = ice_servers
 
 #endregion
 
