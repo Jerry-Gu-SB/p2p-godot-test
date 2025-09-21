@@ -53,21 +53,26 @@ var mouseFree : bool = false
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED) #set mouse as captured
 	
-func _unhandled_input(event):
+func handle_aim():
 	#this function manage camera rotation (360 on x axis, blocked at <= -60 and >= 60 on y axis, to not having the character do a complete head turn, which will be kinda weird)
-	if event is InputEventMouseMotion and is_multiplayer_authority() and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+	if is_multiplayer_authority():
+		# import Mouse/Controller movement since last Aim call from control handler
+		mouseInput = playChar.player_input.mouseInput
 		var sensitivity_factor = 100
 		if playChar.player_input.is_weapon_aim: sensitivity_factor = 100 * (aimFactor * 6)
-		rotate_y(-event.relative.x * (XAxisSens / sensitivity_factor))
-		camera.rotate_x(-event.relative.y * (YAxisSens / sensitivity_factor))
+		rotate_y(-mouseInput.x * (XAxisSens / sensitivity_factor))
+		camera.rotate_x(-mouseInput.y * (YAxisSens / sensitivity_factor))
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(maxUpAngleView), deg_to_rad(maxDownAngleView))
-		mouseInput = event.relative #get position of the mouse in a 2D sceen, so save it in a Vector2 
-
+		
 		# ADDED:
 		if playChar.immobile == false:
-			playChar.player_model.rotate_y(-event.relative.x * (XAxisSens / sensitivity_factor))
+			playChar.player_model.rotate_y(-mouseInput.x * (XAxisSens / sensitivity_factor))
+			
+		# reset movement since last controls poll
+		playChar.player_input.mouseInput = Vector2(0.0,0.0)
 
 func _process(delta):
+	handle_aim()
 	applies(delta)
 	cameraBob(delta)
 	cameraTilt(delta)

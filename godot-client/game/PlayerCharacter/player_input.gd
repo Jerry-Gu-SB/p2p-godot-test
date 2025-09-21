@@ -53,6 +53,11 @@ func _physics_process(_delta: float) -> void:
 	is_weapon_reload = Input.is_action_pressed("weapon_reload")
 	is_weapon_aim = Input.is_action_pressed("weapon_aim")
 	is_debug_b = Input.is_action_pressed("debug_b")
+	
+	#get controller aiming
+	var CInput = Input.get_vector("turn_left", "turn_right", "aim_up", "aim_down") * 50.0
+	mouseInput.x += CInput.x
+	mouseInput.y += CInput.y
 
 func _process(_delta):
 	if Input.is_action_just_pressed('menu') and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
