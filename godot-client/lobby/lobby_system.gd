@@ -22,6 +22,10 @@ signal signal_network_create_new_peer_connection
 signal signal_packet_parsed(message)
 signal signal_set_ice_servers(ice_servers)
 
+# TODO: more "game" prefixed signals? Maybe game started is in here. Maybe 'match' too? "session"?
+signal signal_game_connections_started
+signal signal_game_connections_finished
+signal signal_game_ended # Not used
 
 enum ACTION {
 	Confirm,
@@ -47,8 +51,8 @@ enum ACTION {
 	SetIceServers,
 }
 
-#const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
-const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jonandrewdavis.workers.dev'
+const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
+#const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jonandrewdavis.workers.dev'
 const WEB_SOCKET_SECRET_KEY = "9317e4d6-83b3-4188-94c4-353a2798d3c1"
 #NOTE: Not an actual secret. Just to prevent random connections, but change if you self host
 
@@ -72,6 +76,9 @@ func _ready():
 	signal_set_ice_servers.connect(_network_update_ice_servers)
 	tree_exited.connect(_ws_close_connection)
 
+	signal_lobby_game_started.connect(_listen_for_connections_finished)
+	signal_lobby_game_started.connect(_listen_for_connections_finished_cancel)
+	
 func _process(_delta):
 	ws_peer.poll()
 	var state: WebSocketPeer.State = ws_peer.get_ready_state()
@@ -159,7 +166,7 @@ func _ws_process_packet(message):
 			if message.payload.has("message"): # TODO: "chat_text" ?
 				signal_lobby_chat.emit(message.payload.username, message.payload.message)
 		ACTION.GameStarted:
-			signal_lobby_game_started.emit()
+			signal_lobby_game_started.emit(message.payload.lobby)
 		ACTION.NewPeerConnection:
 			if message.payload.has("id"):
 				signal_network_create_new_peer_connection.emit(int(message.payload.id))
@@ -327,6 +334,29 @@ func _network_update_ice_servers(ice_servers):
 
 #endregion
 
+var should_cancel_connections = false
+
+func _listen_for_connections_finished(lobby):
+	if should_cancel_connections == true:
+		return
+	
+	if multiplayer == null or _is_web_socket_connected() == false:
+		return
+
+	await get_tree().create_timer(1.0).timeout
+	if lobby.players.size() == multiplayer.get_peers().size() + 1: # add 1 to count ourselves as a peer
+		signal_game_connections_finished.emit()
+	else: 
+		# keep trying
+		print('trying')
+		_listen_for_connections_finished(lobby)
+
+# give up after 15 seconds
+func _listen_for_connections_finished_cancel(_lobby):
+	await get_tree().create_timer(15.0).timeout
+	should_cancel_connections = true
+	# TODO: optionally disconnect & send back to lobby.
+	
 
 func generate_random_name():
 	#@Emi's fantastic names 

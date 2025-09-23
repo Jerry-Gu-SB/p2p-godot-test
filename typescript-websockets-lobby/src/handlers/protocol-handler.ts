@@ -424,7 +424,7 @@ export class ProtocolHelper {
 						lobbyToStart.isGameStarted = true;
 						lobbyToStart.players.forEach((player_client: ClientSocket) => {
 							// Start
-							ProtocolHelper.sendGameStarted(player_client); // Note we do not lsiten to this in the client
+							ProtocolHelper.sendGameStarted(player_client, lobbyToStart);
 
 							// Share all new sendNewPeerConnection
 							var current_player_id: String = player_client.id;
@@ -503,9 +503,9 @@ export class ProtocolHelper {
 		}
 	}
 
-	public static sendGameStarted(clientSocket: ClientSocket) {
+	public static sendGameStarted(clientSocket: ClientSocket, lobbyToStart: Lobby) {
 		try {
-			const sendGameStartedMessage: Message = new Message(EAction.GameStarted, {});
+			const sendGameStartedMessage: Message = new Message(EAction.GameStarted, { lobby: lobbyToStart });
 			clientSocket.socket.send(sendGameStartedMessage.toString());
 		} catch (err: any) {
 			LoggerHelper.logError(`[ProtocolHelper.sendGameStarted()] An error had occurred while parsing a message: ${err}`);
