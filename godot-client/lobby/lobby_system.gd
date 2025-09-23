@@ -14,7 +14,7 @@ signal signal_lobby_list_changed(lobbies)
 signal signal_lobby_chat(chat_user, chat_text)
 signal signal_lobby_changed(lobby)
 signal signal_lobby_own_info(lobby)
-signal signal_lobby_game_started
+signal signal_lobby_game_started(lobby)
 signal signal_lobby_get_kicked
 signal signal_lobby_event(message)
 
@@ -51,8 +51,8 @@ enum ACTION {
 	SetIceServers,
 }
 
-const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
-#const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jonandrewdavis.workers.dev'
+#const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
+const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jonandrewdavis.workers.dev'
 const WEB_SOCKET_SECRET_KEY = "9317e4d6-83b3-4188-94c4-353a2798d3c1"
 #NOTE: Not an actual secret. Just to prevent random connections, but change if you self host
 
