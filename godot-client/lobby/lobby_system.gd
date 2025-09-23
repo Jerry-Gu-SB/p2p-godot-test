@@ -23,7 +23,7 @@ signal signal_packet_parsed(message)
 signal signal_set_ice_servers(ice_servers)
 
 # TODO: more "game" prefixed signals? Maybe game started is in here. Maybe 'match' too? "session"?
-signal signal_game_connections_started
+signal signal_game_connections_started # Not emitted yet
 signal signal_game_connections_finished
 signal signal_game_ended # Not used
 
