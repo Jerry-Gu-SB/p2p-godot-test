@@ -11,12 +11,14 @@ export class Lobby {
 	playerIdsBanned: string[] = [];
 	lobbyData: any = {};
 	isGameStarted: boolean = false;
+	isPublic: boolean = true;
 
-	constructor(id: String, players: ClientSocket[] = []) {
+	constructor(id: String, isPublic: boolean = true, players: ClientSocket[] = []) {
 		try {
 			this.players = players;
 			this.id = id;
 			this.lobbyData = {};
+			this.isPublic = isPublic;
 		} catch (err) {
 			LoggerHelper.logError(`An error had occurred while creating the Lobby: ${err}`);
 		}

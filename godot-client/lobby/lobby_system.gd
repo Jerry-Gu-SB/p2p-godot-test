@@ -68,12 +68,14 @@ var ws_peer_id: String
 var ws_connection_validated = false
 
 var current_username = ''
+var turn_server_enabled = false
 
 func _ready():
 	set_process(false)
 	signal_client_connection_confirmed.connect(_network_create_multiplayer_peer)
 	signal_network_create_new_peer_connection.connect(_network_create_new_peer_connection)
-	signal_set_ice_servers.connect(_network_update_ice_servers)
+	if turn_server_enabled:
+		signal_set_ice_servers.connect(_network_update_ice_servers)
 	tree_exited.connect(_ws_close_connection)
 
 	signal_lobby_game_started.connect(_listen_for_connections_finished)

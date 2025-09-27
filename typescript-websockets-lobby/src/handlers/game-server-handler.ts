@@ -3,6 +3,7 @@ import { Lobby } from '../models/lobby';
 import { ProtocolHelper } from './protocol-handler';
 import { LoggerHelper } from '../helpers/logger-helper';
 import * as crypto from 'crypto';
+import { Message } from '../models/message';
 
 // Formatted like a UUID-v4
 function lobbyId() {
@@ -56,9 +57,12 @@ export class GameServerHandler {
 		}
 	}
 
-	public createLobby(): Lobby {
+	public createLobby(message: Message): Lobby {
 		try {
-			const newLobby = new Lobby(lobbyId());
+			const newId = message?.payload?.customId ? message?.payload?.customId : lobbyId();
+			// ..
+			console.log(newId);
+			const newLobby = new Lobby(newId, message?.payload?.isPublic);
 			this.lobbies.push(newLobby);
 			return newLobby;
 		} catch (err: any) {

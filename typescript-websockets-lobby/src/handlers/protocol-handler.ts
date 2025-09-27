@@ -77,7 +77,7 @@ export class ProtocolHelper {
 					ProtocolHelper.sendLobby(gameServer, clientSocket);
 					break;
 				case EAction.CreateLobby:
-					ProtocolHelper.createNewLobby(gameServer, clientSocket);
+					ProtocolHelper.createNewLobby(gameServer, clientSocket, message);
 					break;
 				case EAction.LeaveLobby:
 					ProtocolHelper.leaveLobby(gameServer, clientSocket, message);
@@ -189,8 +189,9 @@ export class ProtocolHelper {
 		}
 	};
 
-	private static createNewLobby = (gameServer: GameServerHandler, clientSocket: ClientSocket) => {
+	private static createNewLobby = (gameServer: GameServerHandler, clientSocket: ClientSocket, message: Message) => {
 		try {
+			console.log('MEASAGE', message);
 			if (gameServer.getLobbyByPlayerId(clientSocket.id)) {
 				LoggerHelper.logWarn(`Client ${clientSocket.id} is requesting a new lobby while inside a lobby.`);
 				// const invalidLobbyMessage = new Message(EAction.CreateLobby, {
@@ -201,7 +202,7 @@ export class ProtocolHelper {
 				return false;
 			} else {
 				LoggerHelper.logInfo(`Client ${clientSocket.id} created a new lobby.`);
-				const newLobby = gameServer.createLobby();
+				const newLobby = gameServer.createLobby(message);
 				newLobby.addPlayer(clientSocket);
 
 				const createLobbySuccessMessage = new Message(EAction.CreateLobby, { lobby: newLobby });
@@ -409,7 +410,9 @@ export class ProtocolHelper {
 				//     ProtocolHelper.sendLobbyChanged(el, lobbyToJoin);
 				//   });
 
-				if (lobbyToStart.players.length >= 2 && !lobbyToStart.isGameStarted) {
+				// TODO: Allow lobby to choose min players.
+				const MIN_PLAYER_COUNT = 1;
+				if (lobbyToStart.players.length >= MIN_PLAYER_COUNT && !lobbyToStart.isGameStarted) {
 					const generateTurnCredentials = lobbyToStart.players.map((player_client: ClientSocket) => {
 						return TurnHelper.generate(turnKey);
 					});
