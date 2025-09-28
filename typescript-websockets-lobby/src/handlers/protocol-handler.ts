@@ -163,7 +163,7 @@ export class ProtocolHelper {
 	public static sendLobbyList = (gameServer: GameServerHandler, clientSocket: ClientSocket) => {
 		try {
 			const lobbyListMessage: Message = new Message(EAction.GetLobbies, {
-				lobbies: gameServer.getLobbies(),
+				lobbies: gameServer.getLobbies().filter((_lobby) => _lobby?.isPublic),
 			});
 			clientSocket.socket.send(lobbyListMessage.toString());
 		} catch (err: any) {

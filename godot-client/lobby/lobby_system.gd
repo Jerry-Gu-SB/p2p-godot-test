@@ -268,6 +268,8 @@ func lobby_update_data(lobbyData: Variant):
 func lobby_kick(id: String):
 	_ws_send_action(ACTION.KickPlayer, {"id": id})
 
+func lobby_create_private():
+	_ws_send_action(ACTION.CreateLobby, { 'isPublic': false })
 
 #region WebRTCMultiplayerPeer
 
