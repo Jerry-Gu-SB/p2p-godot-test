@@ -2,7 +2,7 @@ extends Node2D
 
 class_name World
 
-var player_scene_new = preload("res://game/PlayerCharacter/PlayerCharacterScene.tscn")
+var player_scene_new: PackedScene = preload("res://game/PlayerCharacter/PlayerCharacterScene.tscn")
 
 @export var player_container: Node2D
 
@@ -30,8 +30,8 @@ func RTCPeerDisconnected(id):
 	print("WORLD: rtc peer disconnected " + str(id))
 	remove_player_from_game(id)
 
-func add_player_to_game(id: int):
-	var has_id = id in player_container.get_children().map(func(node): int(node.name))
+func add_player_to_game(id: int) -> void:
+	var has_id: bool = id in player_container.get_children().map(func(node): int(node.name))
 	if has_id == true:
 		return
 
