@@ -53,7 +53,8 @@ enum ACTION {
 
 #const WEB_SOCKET_SERVER_URL = 'ws://localhost:8787'
 const WEB_SOCKET_SERVER_URL = 'wss://typescript-websockets-lobby.jerrysonggu.workers.dev'
-const WEB_SOCKET_SECRET_KEY = "053bf04a-27b8-4cf7-b161-d7c262333549"
+const WEB_SOCKET_SECRET_KEY = "9317e4d6-83b3-4188-94c4-353a2798d3c1"
+# not a real secret.
 
 # Patterned [stun:URI, turn:URI], for default to free unlimited STUN
 var STUN_TURN_SERVER_URLS = ['stun:stun.cloudflare.com']
