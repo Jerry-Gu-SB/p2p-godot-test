@@ -1,20 +1,14 @@
-extends Node3D
+extends Node2D
 
 class_name World
 
 var player_scene_new = preload("res://game/PlayerCharacter/PlayerCharacterScene.tscn")
 
-@export var player_container: Node3D
+@export var player_container: Node2D
 
 signal signal_player_death(id)
 signal signal_player_kill(id)
 
-## TODO: 
-# - Reload weapons while dead
-# - Log messages in-game (killed by X messages)? (upper right corner)
-# - Add Melee 
-# - Nerf or change how jump works?
-# - Disconnect button hide/show game world. unmount wolrd, show
 
 func _ready() -> void:
 	add_to_group('World')
@@ -44,7 +38,7 @@ func add_player_to_game(id: int):
 	var player_to_add = player_scene_new.instantiate()
 	
 	player_to_add.name = str(id)
-	player_to_add.position = Vector3(randi_range(-2, 2), 0.8, randi_range(-2, 2)) * 10
+	player_to_add.position = Vector2(randi_range(-2, 2), randi_range(-2, 2)) * 10
 	player_container.add_child(player_to_add, true)
 
 @rpc("any_peer", 'call_local', 'reliable')
