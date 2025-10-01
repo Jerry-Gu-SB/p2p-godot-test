@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://il7rosme1l0l"]
+[gd_scene load_steps=4 format=3 uid="uid://il7rosme1l0l"]
+
+[ext_resource type="Texture2D" uid="uid://cea13lfx55283" path="res://game/Assets/Visual Art/Player/placeholder_player.png" id="1_wbfe0"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_tb0k5"]
 
@@ -11,3 +13,7 @@ replication_config = SubResource("SceneReplicationConfig_tb0k5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_wbfe0")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_wbfe0")
